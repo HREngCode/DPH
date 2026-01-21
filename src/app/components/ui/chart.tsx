@@ -7,12 +7,20 @@ import { cn } from "./utils";
 
 type ChartTooltipProps = ComponentProps<typeof RechartsPrimitive.Tooltip> &
   ComponentProps<"div"> & {
+    active: boolean;
+    payload?: any[];
+    className?: string;
     hideLabel?: boolean;
-    hideIndicator?: boolean;
-    indicator?: "line" | "dot" | "dashed";
+    label?: React.ReactNode;
+    labelFormatter?: (value: string) => React.ReactNode;
+    labelClassName?: string;
     nameKey?: string;
     labelKey?: string;
+    hideIndicator?: boolean;
+    indicator?: "line" | "dot" | "dashed";
   };
+
+  
 
 type ChartConfig = {
   [key: string]: {
@@ -55,8 +63,15 @@ function ChartTooltipContent({
 }: ChartTooltipProps) {
   const { config } = useChart();
 
+
+
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || payload.length === 0) return null;
+
+    if (!payload || payload.length === 0) {
+    // Handle the case when payload is not defined or empty
+    return null;
+    }
 
     const item = payload[0];
     const key = `${labelKey || item.dataKey || item.name || "value"}`;
